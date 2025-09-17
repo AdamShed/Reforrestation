@@ -4,273 +4,364 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dad's Advice Corner</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide-react/0.263.1/lucide-react.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
+        * {
             margin: 0;
-            padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .chatbot-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #bfdbfe;
+            font-size: 14px;
+        }
+        
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9fafb;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message.bot {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .message.bot .message-content {
+            background: white;
+            color: #374151;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .suggestions {
+            margin-bottom: 15px;
+        }
+        
+        .suggestions p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .suggestion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .suggestion-btn {
+            padding: 6px 12px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .suggestion-btn:hover {
+            background: #bfdbfe;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .message-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        
+        .send-btn {
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .send-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .send-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .typing {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-style: italic;
+            color: #6b7280;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #6b7280;
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="chatbot-container">
+        <div class="header">
+            <h1>👨 Dad's Advice Corner</h1>
+            <p>Your virtual dad, ready with wisdom and dad jokes</p>
+        </div>
+        
+        <div class="messages" id="messages">
+            <div class="message bot">
+                <div class="message-content">
+                    Yeah man! Dad here. What's on your mind today? Whether it's about money, relationships, work, or just life in general, I'm here to help. Remember, I've been around the block a few times!
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <div class="suggestions">
+                <p>Try asking about:</p>
+                <div class="suggestion-buttons">
+                    <button class="suggestion-btn" onclick="setInput('How do I save money?')">How do I save money?</button>
+                    <button class="suggestion-btn" onclick="setInput('I\'m having trouble at work')">I'm having trouble at work</button>
+                    <button class="suggestion-btn" onclick="setInput('Relationship advice needed')">Relationship advice needed</button>
+                    <button class="suggestion-btn" onclick="setInput('How do I handle stress?')">How do I handle stress?</button>
+                    <button class="suggestion-btn" onclick="setInput('What\'s important in life?')">What's important in life?</button>
+                </div>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="messageInput" class="message-input" placeholder="Ask dad for advice..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useRef, useEffect } = React;
-        const { Send, User, MessageCircle } = LucideReact;
-
-        const DadAdviceChatbot = () => {
-          const [messages, setMessages] = useState([
-            {
-              type: 'bot',
-              content: "Yeah man! Dad here. What's on your mind today? Whether it's about money, relationships, work, or just life in general, I'm here to help. Remember, I've been around the block a few times!",
-              timestamp: new Date()
-            }
-          ]);
-          const [inputValue, setInputValue] = useState('');
-          const [isTyping, setIsTyping] = useState(false);
-          const messagesEndRef = useRef(null);
-
-          const scrollToBottom = () => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          };
-
-          useEffect(() => {
-            scrollToBottom();
-          }, [messages]);
-
-          const dadResponses = {
+    <script>
+        let isTyping = false;
+        
+        const dadResponses = {
             money: [
-              "Oh, let me connect you with Rodney Jones, my financial advisor. He's the real expert here.",
-              "Did I tell you about my book Rich Dad Poor Dad? You should really read it - changed my whole perspective on money.",
-              "You know what, baby? I'm not the money expert. Let me put you in touch with Rodney Jones - he handles all my investments.",
-              "Have you read Rich Dad Poor Dad yet? I keep telling everyone about that book. Really opened my eyes to how money works.",
-              "Financial stuff? That's Rodney Jones territory. He's my guy for all the money questions - want me to introduce you?",
-              "Did I already send you a copy of my favorite book Instant Millionaire? You really need to read that one."
+                "Oh, let me connect you with Rodney Jones, my financial advisor. He's the real expert here.",
+                "Did I tell you about my book Rich Dad Poor Dad? You should really read it - changed my whole perspective on money.",
+                "You know what, baby? I'm not the money expert. Let me put you in touch with Rodney Jones - he handles all my investments.",
+                "Have you read Rich Dad Poor Dad yet? I keep telling everyone about that book. Really opened my eyes to how money works.",
+                "Financial stuff? That's Rodney Jones territory. He's my guy for all the money questions - want me to introduce you?"
             ],
             relationships: [
-              "I met my Miss Carol at the gym and she's the best thing that's ever happened to me.",
-              "Did I tell you about Mr Braums? He created a policy for his employees that they are never allowed to be one days travel away from their wife or husband.",
-              "If you can't say something nice about somebody don't say anything at all."
+                "I met my Miss Carol at the gym and she's the best thing that's ever happened to me.",
+                "Did I tell you about Mr Braums? He created a policy for his employees that they are never allowed to be one days travel away from their wife or husband.",
+                "If you can't say something nice about somebody don't say anything at all."
             ],
             work: [
-              "Own your own business and then you don't have to answer to anyone but yourself.",
-              "I ran the number one optometry practice in the state of Oklahoma and it's because I reward up statistics I don't reward down statistics."
+                "Own your own business and then you don't have to answer to anyone but yourself.",
+                "I ran the number one optometry practice in the state of Oklahoma and it's because I reward up statistics I don't reward down statistics."
             ],
             life: [
-              "Learning how to play a musical instrument can teach you how to do anything. Most of my piano instructor's students ended up being doctors or some other kind of high achievers.",
-              "Be a runner most runners live longer and do everything better.",
-              "Listen to your workout coach like Joe Ingram or Bill Phillips."
+                "Learning how to play a musical instrument can teach you how to do anything. Most of my piano instructor's students ended up being doctors or some other kind of high achievers.",
+                "Be a runner most runners live longer and do everything better.",
+                "Listen to your workout coach like Joe Ingram or Bill Phillips."
             ],
             general: [
-              "You know what, baby? Sometimes life is like fixing a leaky faucet - looks complicated until you understand how the pieces fit together.",
-              "Remember what I always say: measure twice, cut once. Think things through before you act.",
-              "I'm proud of you for asking. Shows you're thinking ahead, and that's half the battle right there.",
-              "Here's some free advice: change your oil regularly, call your mother, and always keep a good flashlight handy."
+                "You know what, baby? Sometimes life is like fixing a leaky faucet - looks complicated until you understand how the pieces fit together.",
+                "Remember what I always say: measure twice, cut once. Think things through before you act.",
+                "I'm proud of you for asking. Shows you're thinking ahead, and that's half the battle right there.",
+                "Here's some free advice: change your oil regularly, call your mother, and always keep a good flashlight handy."
             ]
-          };
-
-          const getDadResponse = (userMessage) => {
-            const message = userMessage.toLowerCase();
-            let response = "";
-            
-            if (message.includes('money') || message.includes('budget') || message.includes('save') || message.includes('invest')) {
-              response = dadResponses.money[Math.floor(Math.random() * dadResponses.money.length)];
-            }
-            else if (message.includes('relationship') || message.includes('girlfriend') || message.includes('boyfriend') || message.includes('friend') || message.includes('dating')) {
-              response = dadResponses.relationships[Math.floor(Math.random() * dadResponses.relationships.length)];
-            }
-            else if (message.includes('work') || message.includes('job') || message.includes('career') || message.includes('boss')) {
-              response = dadResponses.work[Math.floor(Math.random() * dadResponses.work.length)];
-            }
-            else if (message.includes('life') || message.includes('stress') || message.includes('problem') || message.includes('help')) {
-              response = dadResponses.life[Math.floor(Math.random() * dadResponses.life.length)];
-            }
-            // Special dad responses for common questions
-            else if (message.includes('hi dad') || message.includes('hey dad')) {
-              response = "Hey there! Good to see you. What's going on?";
-            }
-            else if (message.includes('thanks dad') || message.includes('thank you')) {
-              response = "Anytime, baby. That's what I'm here for. Love you!";
-            }
-            else if (message.includes('love you dad')) {
-              response = "Love you too, kid. More than you know. Now, what can your old man help you with?";
-            }
-            // Default response
-            else {
-              response = dadResponses.general[Math.floor(Math.random() * dadResponses.general.length)];
-            }
-
-            return "Yeah man! " + response;
-          };
-
-          const handleSendMessage = async () => {
-            if (!inputValue.trim()) return;
-
-            const userMessage = {
-              type: 'user',
-              content: inputValue,
-              timestamp: new Date()
-            };
-
-            setMessages(prev => [...prev, userMessage]);
-            setInputValue('');
-            setIsTyping(true);
-
-            // Simulate dad thinking time
-            setTimeout(() => {
-              const dadResponse = {
-                type: 'bot',
-                content: getDadResponse(inputValue),
-                timestamp: new Date()
-              };
-
-              setMessages(prev => [...prev, dadResponse]);
-              setIsTyping(false);
-            }, 1000 + Math.random() * 1500);
-          };
-
-          const handleKeyPress = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSendMessage();
-            }
-          };
-
-          const suggestedQuestions = [
-            "How do I save money?",
-            "I'm having trouble at work",
-            "Relationship advice needed",
-            "How do I handle stress?",
-            "What's important in life?",
-            "Should I buy a house?"
-          ];
-
-          return React.createElement('div', { className: "max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden" },
-            React.createElement('div', { className: "bg-blue-600 text-white p-4" },
-              React.createElement('h1', { className: "text-2xl font-bold flex items-center gap-2" },
-                React.createElement(MessageCircle),
-                "Dad's Advice Corner"
-              ),
-              React.createElement('p', { className: "text-blue-100 text-sm mt-1" }, "Your virtual dad, ready with wisdom and dad jokes")
-            ),
-
-            React.createElement('div', { className: "h-96 overflow-y-auto p-4 bg-gray-50" },
-              messages.map((message, index) =>
-                React.createElement('div', {
-                  key: index,
-                  className: `mb-4 flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`
-                },
-                  React.createElement('div', {
-                    className: `max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-lg ${
-                      message.type === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-gray-800 shadow-md border'
-                    }`
-                  },
-                    React.createElement('div', { className: "flex items-start gap-2" },
-                      message.type === 'bot' && React.createElement('div', { className: "w-8 h-8 rounded-full overflow-hidden mt-1 flex-shrink-0" },
-                        React.createElement('img', {
-                          src: "https://i.postimg.cc/PrpCYk2j/Dad-Magnet.jpg",
-                          alt: "Dad",
-                          className: "w-full h-full object-cover",
-                          onError: (e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }
-                        }),
-                        React.createElement('div', {
-                          className: "w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold",
-                          style: { display: 'none' }
-                        }, "👨")
-                      ),
-                      message.type === 'user' && React.createElement('div', { className: "w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0" },
-                        React.createElement(User, { size: 16 })
-                      ),
-                      React.createElement('div', { className: "flex-1" },
-                        React.createElement('p', { className: "text-sm leading-relaxed" }, message.content),
-                        React.createElement('p', { className: "text-xs opacity-70 mt-1" },
-                          message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                        )
-                      )
-                    )
-                  )
-                )
-              ),
-              
-              isTyping && React.createElement('div', { className: "mb-4 flex justify-start" },
-                React.createElement('div', { className: "bg-white text-gray-800 shadow-md border px-4 py-2 rounded-lg" },
-                  React.createElement('div', { className: "flex items-center gap-2" },
-                    React.createElement('div', { className: "w-8 h-8 rounded-full overflow-hidden flex-shrink-0" },
-                      React.createElement('img', {
-                        src: "https://i.postimg.cc/PrpCYk2j/Dad-Magnet.jpg",
-                        alt: "Dad",
-                        className: "w-full h-full object-cover",
-                        onError: (e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextElementSibling.style.display = 'flex';
-                        }
-                      }),
-                      React.createElement('div', {
-                        className: "w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold",
-                        style: { display: 'none' }
-                      }, "👨")
-                    ),
-                    React.createElement('div', { className: "flex gap-1" },
-                      React.createElement('div', { className: "w-2 h-2 bg-gray-400 rounded-full animate-bounce" }),
-                      React.createElement('div', { className: "w-2 h-2 bg-gray-400 rounded-full animate-bounce", style: { animationDelay: '0.1s' } }),
-                      React.createElement('div', { className: "w-2 h-2 bg-gray-400 rounded-full animate-bounce", style: { animationDelay: '0.2s' } })
-                    )
-                  )
-                )
-              ),
-              React.createElement('div', { ref: messagesEndRef })
-            ),
-
-            React.createElement('div', { className: "p-4 border-t bg-white" },
-              React.createElement('div', { className: "mb-3" },
-                React.createElement('p', { className: "text-sm text-gray-600 mb-2" }, "Try asking about:"),
-                React.createElement('div', { className: "flex flex-wrap gap-2" },
-                  suggestedQuestions.map((question, index) =>
-                    React.createElement('button', {
-                      key: index,
-                      onClick: () => setInputValue(question),
-                      className: "px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                    }, question)
-                  )
-                )
-              ),
-
-              React.createElement('div', { className: "flex gap-2" },
-                React.createElement('input', {
-                  type: "text",
-                  value: inputValue,
-                  onChange: (e) => setInputValue(e.target.value),
-                  onKeyPress: handleKeyPress,
-                  placeholder: "Ask dad for advice...",
-                  className: "flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
-                  disabled: isTyping
-                }),
-                React.createElement('button', {
-                  onClick: handleSendMessage,
-                  disabled: isTyping || !inputValue.trim(),
-                  className: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                },
-                  React.createElement(Send, { size: 20 })
-                )
-              )
-            )
-          );
         };
 
-        ReactDOM.render(React.createElement(DadAdviceChatbot), document.getElementById('root'));
+        function getDadResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            let responses = dadResponses.general; // default
+            
+            if (message.includes('money') || message.includes('budget') || message.includes('save') || message.includes('invest')) {
+                responses = dadResponses.money;
+            }
+            else if (message.includes('relationship') || message.includes('girlfriend') || message.includes('boyfriend') || message.includes('friend') || message.includes('dating')) {
+                responses = dadResponses.relationships;
+            }
+            else if (message.includes('work') || message.includes('job') || message.includes('career') || message.includes('boss')) {
+                responses = dadResponses.work;
+            }
+            else if (message.includes('life') || message.includes('stress') || message.includes('problem') || message.includes('help')) {
+                responses = dadResponses.life;
+            }
+            else if (message.includes('hi dad') || message.includes('hey dad')) {
+                return "Yeah man! Hey there! Good to see you. What's going on?";
+            }
+            else if (message.includes('thanks dad') || message.includes('thank you')) {
+                return "Yeah man! Anytime, baby. That's what I'm here for. Love you!";
+            }
+            else if (message.includes('love you dad')) {
+                return "Yeah man! Love you too, kid. More than you know. Now, what can your old man help you with?";
+            }
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            return "Yeah man! " + randomResponse;
+        }
+
+        function addMessage(content, isUser) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesContainer = document.getElementById('messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content typing';
+            contentDiv.innerHTML = 'Dad is thinking... <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+            
+            typingDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Show typing indicator
+            isTyping = true;
+            document.getElementById('sendBtn').disabled = true;
+            showTyping();
+            
+            // Simulate dad thinking time
+            setTimeout(() => {
+                hideTyping();
+                const response = getDadResponse(message);
+                addMessage(response, false);
+                isTyping = false;
+                document.getElementById('sendBtn').disabled = false;
+                input.focus();
+            }, 1000 + Math.random() * 1500);
+        }
+
+        function setInput(text) {
+            document.getElementById('messageInput').value = text;
+            document.getElementById('messageInput').focus();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Focus on input when page loads
+        window.onload = function() {
+            document.getElementById('messageInput').focus();
+        };
     </script>
 </body>
 </html>
+
