@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dad's Advice Corner</title>
+    <title>Ask Dad - Oklahoma Champion's Wisdom</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨🏻</text></svg>">
     <style>
         * {
             margin: 0;
@@ -198,8 +199,8 @@
 <body>
     <div class="chatbot-container">
         <div class="header">
-            <h1>👨 Dad's Advice Corner</h1>
-            <p>Your virtual dad, ready with wisdom and dad jokes</p>
+            <h1>💪 Ask Dad - Oklahoma Champion</h1>
+            <p>State Champion Bodybuilder & #1 Optometrist - Here to share life wisdom</p>
         </div>
         
         <div class="messages" id="messages">
@@ -217,8 +218,8 @@
                     <button class="suggestion-btn" onclick="setInput('How do I save money?')">How do I save money?</button>
                     <button class="suggestion-btn" onclick="setInput('I\'m having trouble at work')">I'm having trouble at work</button>
                     <button class="suggestion-btn" onclick="setInput('Relationship advice needed')">Relationship advice needed</button>
+                    <button class="suggestion-btn" onclick="setInput('Should I buy a house?')">Should I buy a house?</button>
                     <button class="suggestion-btn" onclick="setInput('How do I handle stress?')">How do I handle stress?</button>
-                    <button class="suggestion-btn" onclick="setInput('What\'s important in life?')">What's important in life?</button>
                 </div>
             </div>
             
@@ -238,34 +239,33 @@
                 "Did I tell you about my book Rich Dad Poor Dad? You should really read it - changed my whole perspective on money.",
                 "You know what, baby? I'm not the money expert. Let me put you in touch with Rodney Jones - he handles all my investments.",
                 "Have you read Rich Dad Poor Dad yet? I keep telling everyone about that book. Really opened my eyes to how money works.",
-                "Financial stuff? That's Rodney Jones territory. He's my guy for all the money questions - want me to introduce you?", 
-                "Have I sent you a copy of Instant Millionaire yet? If you read it and do what he says, you'll be rich!"
+                "Financial stuff? That's Rodney Jones territory. He's my guy for all the money questions - want me to introduce you?"
             ],
             relationships: [
                 "I met my Miss Carol at the gym and she's the best thing that's ever happened to me.",
                 "Did I tell you about Mr Braums? He created a policy for his employees that they are never allowed to be one days travel away from their wife or husband.",
-                "If you can't say something nice about somebody don't say anything at all.", 
-                "I love my Carol."
+                "If you can't say something nice about somebody don't say anything at all."
             ],
             work: [
                 "Own your own business and then you don't have to answer to anyone but yourself.",
-                "I ran the number one optometry practice in the state of Oklahoma and it's because I reward up statistics I don't reward down statistics.",
-                "When I was in school, I would read the chapters and outline them.", 
-                "I was just nieve enough to think I could accomplish what I did.", 
+                "I ran the number one optometry practice in the state of Oklahoma and it's because I reward up statistics I don't reward down statistics."
             ],
             life: [
                 "Learning how to play a musical instrument can teach you how to do anything. Most of my piano instructor's students ended up being doctors or some other kind of high achievers.",
                 "Be a runner most runners live longer and do everything better.",
-                "Listen to your workout coach like Joe Ingram or Bill Phillips.", 
-                "Like when you're scuba diving, Plan your dive and dive your plan."
+                "Listen to your workout coach like Joe Ingram or Bill Phillips."
+            ],
+            realestate: [
+                "Real estate is one of my favorite investments, I hired an architect to design my house exactly like I wanted.",
+                "I designed my own fireplace at the big house on valley vista.",
+                "Did you see the new white fence we installed in the front?",
+                "Did you pay cash for your house like Adam?"
             ],
             general: [
                 "You know what, baby? Sometimes life is like fixing a leaky faucet - looks complicated until you understand how the pieces fit together.",
                 "Remember what I always say: measure twice, cut once. Think things through before you act.",
                 "I'm proud of you for asking. Shows you're thinking ahead, and that's half the battle right there.",
-                "I learned when I was giving presentaions for optometry, you say what your going to say, say it and then summarize what you said.", 
-                "When I was a pilot, I got my instruments rating and anyone that didn't have their instrument rating in a storm will wish they did! lol.",
-                "You know why Jenny turned out as good as she did? Because by the time we had her, her mom was too tired to bottle feed her and so she got breast fed.",
+                "Here's some free advice: change your oil regularly, call your mother, and always keep a good flashlight handy."
             ]
         };
 
@@ -285,11 +285,14 @@
             else if (message.includes('life') || message.includes('stress') || message.includes('problem') || message.includes('help')) {
                 responses = dadResponses.life;
             }
+            else if (message.includes('house') || message.includes('real estate') || message.includes('property') || message.includes('home') || message.includes('buy') || message.includes('invest')) {
+                responses = dadResponses.realestate;
+            }
             else if (message.includes('hi dad') || message.includes('hey dad')) {
                 return "Yeah man! Hey there! Good to see you. What's going on?";
             }
             else if (message.includes('thanks dad') || message.includes('thank you')) {
-                return "Yeah man! Anytime, man! That's what I'm here for. Love you!";
+                return "Yeah man! Anytime, baby. That's what I'm here for. Love you!";
             }
             else if (message.includes('love you dad')) {
                 return "Yeah man! Love you too, kid. More than you know. Now, what can your old man help you with?";
